@@ -27,8 +27,14 @@ export default function AppTabs() {
           <TabTrigger name="scoring" href="/scoring" asChild>
             <TabButton>🎯 Tir</TabButton>
           </TabTrigger>
-          <TabTrigger name="explore" href="/explore" asChild>
-            <TabButton>Explore</TabButton>
+          <TabTrigger name="history" href="/history" asChild>
+            <TabButton>📋 Historique</TabButton>
+          </TabTrigger>
+          <TabTrigger name="license" href="/license" asChild>
+            <TabButton>🪪 Licence</TabButton>
+          </TabTrigger>
+          <TabTrigger name="profile" href="/profile" asChild>
+            <TabButton>👤 Profil</TabButton>
           </TabTrigger>
         </CustomTabList>
       </TabList>
@@ -63,16 +69,6 @@ export function CustomTabList(props: TabListProps) {
 
         {props.children}
 
-        <ExternalLink href="https://docs.expo.dev" asChild>
-          <Pressable style={styles.externalPressable}>
-            <ThemedText type="link">Docs</ThemedText>
-            <SymbolView
-              tintColor={colors.text}
-              name={{ ios: 'arrow.up.right.square', web: 'link' }}
-              size={12}
-            />
-          </Pressable>
-        </ExternalLink>
       </ThemedView>
     </View>
   );
