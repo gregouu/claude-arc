@@ -1,4 +1,6 @@
 import { create } from 'zustand';
+import { persist, createJSONStorage } from 'zustand/middleware';
+import { zustandStorage } from './storage';
 import type { Arrow, BlasonType, Discipline, Session, SessionStats } from '@/types/scoring';
 
 interface ScoringState {
@@ -20,7 +22,6 @@ interface ScoringState {
 
 function scoreFromPosition(x: number, y: number): { score: number; isX: boolean } {
   const dist = Math.sqrt(x * x + y * y);
-  // 10 equal rings, each 0.1 wide. X = inner half of the 10 ring.
   if (dist <= 0.05) return { score: 10, isX: true };
   if (dist <= 0.10) return { score: 10, isX: false };
   if (dist <= 0.20) return { score: 9, isX: false };
@@ -35,86 +36,95 @@ function scoreFromPosition(x: number, y: number): { score: number; isX: boolean 
   return { score: 0, isX: false };
 }
 
-export const useScoringStore = create<ScoringState>((set, get) => ({
-  currentSession: null,
-  sessions: [],
-
-  startSession: (config) => {
-    const session: Session = {
-      id: Date.now().toString(),
-      date: new Date().toISOString(),
-      ...config,
-      arrows: [],
-    };
-    set({ currentSession: session });
-  },
-
-  addArrow: (x, y) => {
-    const { currentSession } = get();
-    if (!currentSession) return;
-
-    const totalArrows = currentSession.arrowsPerVolley * currentSession.totalVolleys;
-    if (currentSession.arrows.length >= totalArrows) return;
-
-    const currentVolley = Math.floor(currentSession.arrows.length / currentSession.arrowsPerVolley) + 1;
-    const { score, isX } = scoreFromPosition(x, y);
-
-    const arrow: Arrow = {
-      id: Date.now().toString(),
-      x,
-      y,
-      score,
-      isX,
-      volley: currentVolley,
-    };
-
-    set({
-      currentSession: {
-        ...currentSession,
-        arrows: [...currentSession.arrows, arrow],
-      },
-    });
-  },
-
-  removeLastArrow: () => {
-    const { currentSession } = get();
-    if (!currentSession || currentSession.arrows.length === 0) return;
-    set({
-      currentSession: {
-        ...currentSession,
-        arrows: currentSession.arrows.slice(0, -1),
-      },
-    });
-  },
-
-  cancelSession: () => {
-    set({ currentSession: null });
-  },
-
-  endSession: () => {
-    const { currentSession, sessions } = get();
-    if (!currentSession) return;
-    set({
-      sessions: [...sessions, currentSession],
+export const useScoringStore = create<ScoringState>()(
+  persist(
+    (set, get) => ({
       currentSession: null,
-    });
-  },
+      sessions: [],
 
-  getStats: () => {
-    const { currentSession } = get();
-    if (!currentSession) return null;
+      startSession: (config) => {
+        const session: Session = {
+          id: Date.now().toString(),
+          date: new Date().toISOString(),
+          ...config,
+          arrows: [],
+        };
+        set({ currentSession: session });
+      },
 
-    const arrows = currentSession.arrows;
-    const totalScore = arrows.reduce((sum, a) => sum + a.score, 0);
-    const maxScore = currentSession.arrowsPerVolley * currentSession.totalVolleys * 10;
+      addArrow: (x, y) => {
+        const { currentSession } = get();
+        if (!currentSession) return;
 
-    return {
-      totalScore,
-      maxScore,
-      average: arrows.length > 0 ? totalScore / arrows.length : 0,
-      xCount: arrows.filter((a) => a.isX).length,
-      tenCount: arrows.filter((a) => a.score === 10).length,
-      arrowCount: arrows.length,
-    };
-  },
-}));
+        const totalArrows = currentSession.arrowsPerVolley * currentSession.totalVolleys;
+        if (currentSession.arrows.length >= totalArrows) return;
+
+        const currentVolley = Math.floor(currentSession.arrows.length / currentSession.arrowsPerVolley) + 1;
+        const { score, isX } = scoreFromPosition(x, y);
+
+        const arrow: Arrow = {
+          id: Date.now().toString(),
+          x,
+          y,
+          score,
+          isX,
+          volley: currentVolley,
+        };
+
+        set({
+          currentSession: {
+            ...currentSession,
+            arrows: [...currentSession.arrows, arrow],
+          },
+        });
+      },
+
+      removeLastArrow: () => {
+        const { currentSession } = get();
+        if (!currentSession || currentSession.arrows.length === 0) return;
+        set({
+          currentSession: {
+            ...currentSession,
+            arrows: currentSession.arrows.slice(0, -1),
+          },
+        });
+      },
+
+      cancelSession: () => {
+        set({ currentSession: null });
+      },
+
+      endSession: () => {
+        const { currentSession, sessions } = get();
+        if (!currentSession) return;
+        set({
+          sessions: [...sessions, currentSession],
+          currentSession: null,
+        });
+      },
+
+      getStats: () => {
+        const { currentSession } = get();
+        if (!currentSession) return null;
+
+        const arrows = currentSession.arrows;
+        const totalScore = arrows.reduce((sum, a) => sum + a.score, 0);
+        const maxScore = currentSession.arrowsPerVolley * currentSession.totalVolleys * 10;
+
+        return {
+          totalScore,
+          maxScore,
+          average: arrows.length > 0 ? totalScore / arrows.length : 0,
+          xCount: arrows.filter((a) => a.isX).length,
+          tenCount: arrows.filter((a) => a.score === 10).length,
+          arrowCount: arrows.length,
+        };
+      },
+    }),
+    {
+      name: 'claude-arc-scoring',
+      storage: createJSONStorage(() => zustandStorage),
+      partialize: (state) => ({ sessions: state.sessions }),
+    }
+  )
+);

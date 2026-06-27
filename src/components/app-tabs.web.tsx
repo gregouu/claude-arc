@@ -30,6 +30,9 @@ export default function AppTabs() {
           <TabTrigger name="history" href="/history" asChild>
             <TabButton>📋 Historique</TabButton>
           </TabTrigger>
+          <TabTrigger name="equipment" href="/equipment" asChild>
+            <TabButton>🏹 Matériel</TabButton>
+          </TabTrigger>
           <TabTrigger name="license" href="/license" asChild>
             <TabButton>🪪 Licence</TabButton>
           </TabTrigger>
