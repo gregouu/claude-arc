@@ -51,8 +51,8 @@ export default function DashboardScreen() {
         <View style={styles.quickActions}>
           <QuickAction icon="🎯" label="Nouvelle séance" onPress={() => router.push('/scoring')} />
           <QuickAction icon="🪪" label="Ma licence" onPress={() => router.push('/license')} />
+          <QuickAction icon="🏹" label="Mon matériel" onPress={() => router.push('/equipment')} />
           <QuickAction icon="📋" label="Historique" onPress={() => router.push('/history')} />
-          <QuickAction icon="👤" label="Mon profil" onPress={() => router.push('/profile')} />
         </View>
 
         <View style={[styles.card, { backgroundColor: Colors[colorScheme].backgroundElement }]}>

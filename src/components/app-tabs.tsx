@@ -36,6 +36,14 @@ export default function AppTabs() {
         />
       </NativeTabs.Trigger>
 
+      <NativeTabs.Trigger name="equipment">
+        <NativeTabs.Trigger.Label>Matériel</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Icon
+          src={require('@/assets/images/tabIcons/explore.png')}
+          renderingMode="template"
+        />
+      </NativeTabs.Trigger>
+
       <NativeTabs.Trigger name="license">
         <NativeTabs.Trigger.Label>Licence</NativeTabs.Trigger.Label>
         <NativeTabs.Trigger.Icon

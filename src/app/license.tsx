@@ -3,6 +3,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
+import { QRCode } from '@/components/qr-code';
 import { Colors, Spacing } from '@/constants/theme';
 import { useLicenseStore } from '@/store/license';
 
@@ -116,7 +117,7 @@ export default function LicenseScreen() {
         </View>
 
         {/* QR Code */}
-        <QRPlaceholder data={`FFTA-${license.number}-${license.season}`} />
+        <QRCode data={`FFTA-${license.number}-${license.season}-${license.lastName}`} size={180} />
 
         <View style={[styles.offlineNote, { backgroundColor: Colors[colorScheme].backgroundElement }]}>
           <ThemedText type="small">📱 Disponible hors ligne — Présentez ce QR code au greffe</ThemedText>
