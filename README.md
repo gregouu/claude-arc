@@ -1,23 +1,27 @@
-# claude-arc
+# Claude Arc - Plateforme de Tir à l'Arc
 
-A simple Python utility for text processing.
+La plateforme de référence mondiale du tir à l'arc.
 
-## Features
+## Stack
 
-- Count words in a string
-- Reverse a string
-- Check if a string is a palindrome
+- **Mobile** : React Native + Expo + TypeScript
+- **State** : Zustand + React Query
+- **Backend** : PHP 8.4 + MySQL (à venir)
+- **Services** : Firebase (à venir)
 
-## Usage
+## Démarrage
 
-```python
-from utils import count_words, reverse_string, is_palindrome
-
-count_words("Hello world")  # 2
-reverse_string("hello")     # "olleh"
-is_palindrome("racecar")    # True
+```bash
+npm install
+npx expo start
 ```
 
-## Installation
+Scanner le QR code avec Expo Go sur votre téléphone, ou lancer sur émulateur.
 
-No dependencies required — just Python 3.8+.
+## Roadmap
+
+- **V1** : Carnet de tir, Licence, Profil, Statistiques
+- **V2** : Clubs, Compétitions, QR Code, Boutique
+- **V3** : IA, Vision, Analyse avancée
+- **V4** : Réseau social, Coach, Premium
+- **V5** : API publique, Marketplace, International
